@@ -8,7 +8,7 @@ import * as express from 'express';
 const app = express();
 
 app.get('/api', (req, res) => {
-  console.log('test')
+  console.log('test 1')
   res.send({ message: 'Welcome to node-app!' });
 });
 
