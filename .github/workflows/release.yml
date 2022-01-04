@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Set base and head SHAs used for nx affected
+        id: setSHAs
+        shell: bash
+        run: node ./scripts/find-last-successful-release.js ${{ github.token }}
+      - name: Log base and head SHAs used for nx affected
+        shell: bash
+        run: |
+          echo "Base SHA"
+          echo ${{ steps.setSHAs.outputs.base }}
+          echo ""
+          echo "Head SHA"
+          echo ${{ steps.setSHAs.outputs.head }}
+          echo ""
+      - name: Set the derived SHAs as NX_BASE and NX_HEAD environment variables for the current job
+        shell: bash
+        run: |
+          echo "NX_BASE=${{ steps.setSHAs.outputs.base }}" >> $GITHUB_ENV
+          echo "NX_HEAD=${{ steps.setSHAs.outputs.head }}" >> $GITHUB_ENV
+          echo "NX_BASE and NX_HEAD environment variables have been set for the current Job"
+      - name: Show affected services
+        shell: bash
+        run: npx nx print-affected
+        

@@ -3,7 +3,7 @@ name: Pull request
 on:
   pull-request:
     branches:
-      - master
+      - main
 
 jobs:
 
@@ -30,7 +30,7 @@ jobs:
         id: setSHAs
         with:
           main-branch-name: main
-          workflow-id: push.yml
+          workflow-id: pull-request.yml
       - name: Install dependencies
         run: npm ci
       - name: Shows affected projects
