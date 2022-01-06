@@ -75,8 +75,6 @@ async function findSuccessfulCommit(workflow_id, run_id, owner, repo, branch, la
     .request(`GET /repos/${owner}/${repo}/actions/workflows/${workflow_id}/runs`, {
       owner,
       repo,
-      branch,
-      workflow_id,
       event: lastSuccessfulEvent,
       status: 'success',
     })
